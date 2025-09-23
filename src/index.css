@@ -1,5 +1,5 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Alan Sans", sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -15,11 +15,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #64ff8b;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #53f26e;
 }
 
 body {
@@ -47,7 +47,7 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #64ff71;
 }
 button:focus,
 button:focus-visible {
@@ -56,11 +56,11 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    color: #214727;
     background-color: #ffffff;
   }
   a:hover {
-    color: #747bff;
+    color: #74ff8b;
   }
   button {
     background-color: #f9f9f9;
