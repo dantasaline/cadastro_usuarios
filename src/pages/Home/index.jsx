@@ -5,72 +5,86 @@ import { useEffect, useState, useRef } from 'react'
 
 function Home() {
   const [usuarios, setUsuarios] = useState([])
-  // let usuarios = []
+  const [editId, setEditId] = useState(null) 
 
   const inputNome = useRef()
   const inputEmail = useRef()
   const inputIdade = useRef()
 
-
-  async function getUsuarios(){
+  async function getUsuarios() {
     const usuariosdaApi = await api.get('/cadastro')
     setUsuarios(usuariosdaApi.data)
-    console.log(usuarios)
   }
 
-  async function createUsuarios(){
-    await api.post('/cadastro',{
-      email: inputEmail.current.value,
-      nome: inputNome.current.value,
-      idade: inputIdade.current.value
-    })
-    getUsuarios()
+  async function salvarUsuario() {
+    if (editId) {
+
+      await api.put(`/cadastro/${editId}`, {
+        nome: inputNome.current.value,
+        idade: inputIdade.current.value,
+        email: inputEmail.current.value
+      })
+      setEditId(null) 
+    } else {
+
+      await api.post('/cadastro', {
+        nome: inputNome.current.value,
+        idade: inputIdade.current.value,
+        email: inputEmail.current.value
+      })
+    }
+
 
     inputNome.current.value = ''
-    inputEmail.current.value = ''
     inputIdade.current.value = ''
+    inputEmail.current.value = ''
+    getUsuarios()
   }
 
-  async function deleteUsuarios(id){
+  async function deleteUsuarios(id) {
     await api.delete(`/cadastro/${id}`)
     getUsuarios()
   }
 
-  async function atualizaUsuarios(id){
+  function editarUsuario(usuario) {
 
+    inputNome.current.value = usuario.nome
+    inputIdade.current.value = usuario.idade
+    inputEmail.current.value = usuario.email
+    setEditId(usuario.id)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getUsuarios()
-  },[])
+  }, [])
 
   return (
     <div className='container'>
       <form>
         <h1>Cadastro de Usuários</h1>
-        <input placeholder='Digite seu nome' name='nome' type='text' ref={inputNome}/>
-        <input placeholder='Digite sua idade' name='idade' type='number' ref={inputIdade}/>
-        <input placeholder='Digite seu email' name='email' type='email' ref={inputEmail}/>
-        <button type='button' onClick={createUsuarios}>Cadastrar</button>
+        <input placeholder='Digite seu nome' type='text' ref={inputNome}/>
+        <input placeholder='Digite sua idade' type='number' ref={inputIdade}/>
+        <input placeholder='Digite seu email' type='email' ref={inputEmail}/>
+        <button type='button' onClick={salvarUsuario}>
+          {editId ? 'Atualizar' : 'Cadastrar'}
+        </button>
       </form>
-      {usuarios.map(usuarios => (
-      <div key={usuarios.id} className='card'>
-        <div>
-          <p>Nome: <span>{usuarios.nome}</span></p>
-          <p>Idade: <span>{usuarios.idade}</span></p>
-          <p>Email: <span>{usuarios.email}</span></p>
+      {usuarios.map(usuario => (
+        <div key={usuario.id} className='card'>
+          <div>
+            <p>Nome: <span>{usuario.nome}</span></p>
+            <p>Idade: <span>{usuario.idade}</span></p>
+            <p>Email: <span>{usuario.email}</span></p>
+          </div>
+          <button onClick={() => deleteUsuarios(usuario.id)}>
+            <Trash2 size={30}/>
+          </button>
+          <button onClick={() => editarUsuario(usuario)}>
+            <Pencil size={30}/>
+          </button>
         </div>
-        <button onClick={()=> deleteUsuarios(usuarios.id)}>
-          <Trash2 size={30}/>
-        </button>
-        <button onClick={()=> atualizaUsuarios(usuarios.id)}>
-          <Pencil size={30}/>
-        </button>
-      </div>
       ))}
     </div>
-
-
   )
 }
 
